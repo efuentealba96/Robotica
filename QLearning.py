@@ -1,16 +1,17 @@
-#import pygame as pg
 import random as ra
+import pygame as pyg
+import sys
 
 # Parametros modelo QLearning RL_MDP Discount rewards
 ALPHA = 0.1  # Tasa de aprendizaje
 GAMMA = 0.98  # Tasa de descuento
-nMax_episodidos = 100
+nMax_episodidos = 1000
 
 # Acciones
-nNorte = 0
-nSur = 1
-nEste = 2
-nOeste = 3
+nNORTE = 0
+nSUR = 1
+nESTE = 2
+nWESTE = 3
 
 # Datos mapa de navegacion
 nFilasMin = 0
@@ -52,7 +53,7 @@ aSTATE = [[0,  1,  2,  3,  4, -1,  5,  6],  # 0
 
 
 def InitQTable(nS, nA):
-    aQ = [[0.0 for i in range(nA) for i in range(nS)]]
+    aQ = [[0.0 for i in range(nA)]for i in range(nS)]
     return aQ
 
 # Estados inicial del robot en el mapa
@@ -100,49 +101,49 @@ def UpDateQ(s, a, r, sp):
 def OtherAction(nA, fil, col):
     nDadoA = ra.random()
     # Accion Norte
-    if nA == nNorte:
+    if nA == nNORTE:
         if col > 0 and col < 7:
             if nDadoA >= 0.0 and nDadoA < 0.5:
-                return nEste
+                return nESTE
             else:
-                return nOeste
+                return nWESTE
         if col == 0:
-            return nEste
+            return nESTE
         if col == 7:
-            return nOeste
+            return nWESTE
     # Accion Sur
-    if nA == nSur:
+    if nA == nSUR:
         if col > 0 and col < 7:
             if nDadoA >= 0.0 and nDadoA < 0.5:
-                return nEste
+                return nESTE
             else:
-                return nOeste
+                return nWESTE
         if col == 0:
-            return nEste
+            return nESTE
         if col == 7:
-            return nOeste
+            return nWESTE
     # Accion Este
-    if nA == nEste:
+    if nA == nESTE:
         if fil > 0 and fil < 11:
             if nDadoA >= 0.0 and nDadoA < 0.5:
-                return nNorte
+                return nNORTE
             else:
-                return nSur
+                return nSUR
         if fil == 0:
-            return nSur
+            return nSUR
         if fil == 11:
-            return nNorte
+            return nNORTE
     # Accion Oeste
-    if nA == nOeste:
+    if nA == nWESTE:
         if fil > 0 and fil < 11:
             if nDadoA >= 0.0 and nDadoA < 0.5:
-                return nNorte
+                return nNORTE
             else:
-                return nSur
+                return nSUR
         if fil == 0:
-            return nSur
+            return nSUR
         if fil == 11:
-            return nNorte
+            return nNORTE
 
 # Simulamos la navegacion
 
@@ -153,8 +154,8 @@ def Run_Action(a, nExito):
     nDado = ra.random()
     i = aPosRM[0]  # Fila Posicion del robot mapa
     j = aPosRM[1]  # Columna Posicion del robot mapa
-    if a == nNorte:  # El robot sube
-        if i > 0:  # Bordes del Mapa
+    if a == nNORTE:  # El robot sube
+        if i > nFilasMin:  # Bordes del Mapa
             if aMAPA[i-1][j] != -1:  # Hay una muralla?
                 # ------------ Probabilidad ----------------
                 if nDado >= 0.0 and nDado <= nExito:  # <-------------- Probabilidad de moverse
@@ -176,7 +177,7 @@ def Run_Action(a, nExito):
             next_state = aSTATE[i][j]  # Actualizar nuevo Estado
             return next_state
     #########################################################################
-    if a == nSur:  # El robot baja
+    if a == nSUR:  # El robot baja
         if i < 11:  # Bordes del Mapa
             if aMAPA[i+1][j] != -1:  # Hay una muralla?
                 # ------------ Probabilidad ----------------
@@ -198,7 +199,7 @@ def Run_Action(a, nExito):
             next_state = aSTATE[i][j]
             return next_state
 
-    if a == nEste:  # El robot va a la derecha
+    if a == nESTE:  # El robot va a la derecha
         if j < 7:  # Bordes del Mapa
             if aMAPA[i][j+1] != -1:  # Hay una muralla?
                 # ------------ Probabilidad ----------------
@@ -220,7 +221,7 @@ def Run_Action(a, nExito):
             next_state = aSTATE[i][j]
             return next_state
 
-    if a == nOeste:  # El robot va a la izquierda
+    if a == nWESTE:  # El robot va a la izquierda
         if j > 0:  # Bordes del Mapa
             if aMAPA[i][j-1] != -1:  # Hay una muralla?
                 # ------------ Probabilidad ----------------
@@ -246,20 +247,18 @@ def Run_Action(a, nExito):
 # QLearning
 
 
-def QLearning(MaxSteps=100, ):
-    global nM
+def QLearning(MaxSteps=100):
     s = aSTATE[0][0]  # Posicion inicial
     steps = 0
     tl_rw = 0
-    nM = 0
     for i in range(0, MaxSteps):
         a = Get_Greedy_Action(s)  # Samplea Accion, [0,1,2,3] = [n,s,e,o]
         sp = Run_Action(a, 0.80)
-        rw = Get_RW(sp)
+        rw = Get_RW(aPosRM)
         tl_rw += rw
+        steps += 1
         UpDateQ(s, a, rw, sp)
         s = sp
-        steps += 1
         if aPosRM == aMeta:
             break
     return tl_rw, steps
@@ -268,13 +267,70 @@ def QLearning(MaxSteps=100, ):
 Epsilon = 0.1
 Q = InitQTable(62, 4)
 aList_A = ['N', 'S', 'E', 'O']
-aPosRM = [0, 0]
 for i in range(nMax_episodidos):
+    aPosRM = [0, 7]
     total_rw, steps = QLearning(nMax_episodidos)
     print('Episodio: ' + str(i) + ' Steps: ' +
           str(steps) + ' Reward: ' + str(total_rw))
     Epsilon *= 0.9
 
-print(Q)
-for i in range(62):
-    print(str(i) + ' -> ' + aList_A[Q[i].index(max(Q[i]))] + '\n')
+
+aOPTIMO = aSTATE
+# Crea un mapa con los movimientos optimos
+for i in range(146):
+    for s in range(len(aOPTIMO)):  # f , c = Q.index(i)
+        for z in range(len(aOPTIMO[s])):
+            if aOPTIMO[s][z] == i:
+                aOPTIMO[s][z] = aList_A[Q[i].index(max(Q[i]))]
+                continue
+            if aOPTIMO[s][z] == -1:
+                aOPTIMO[s][z] = '▉'
+                continue
+
+for i in aOPTIMO:
+    print(i)
+
+print(aOPTIMO)
+# Seccion de trabajo con pygame
+pyg.init()
+size = width, height = 400, 600
+screen = pyg.display.set_mode(size)
+pyg.display.set_caption("Proyecto final")
+icon = pyg.image.load("images/terminator.png")
+pyg.display.set_icon(icon)
+
+sizeImage = (50, 50)
+
+muro = pyg.transform.scale(pyg.image.load("images/muro.png"), sizeImage)
+nave = pyg.transform.scale(pyg.image.load("images/nave.png"), (40, 40))
+star = pyg.transform.scale(pyg.image.load("images/star.png"), sizeImage)
+fondo = pyg.transform.scale(pyg.image.load("images/fondo.jpg"), sizeImage)
+
+x = 0
+y = 0
+screen.blit(nave, (0, 0))
+for i in range(12):
+    for j in range(8):
+        if aMAPA[i][j] == -1:
+            screen.blit(muro, (x, y))
+            x += 50
+        else:
+            screen.blit(fondo, (x, y))
+            x += 50
+    screen.blit(star, (200, 50*10))
+    x = 0
+    y += 50
+screen.blit(nave, (aPosRM[0], aPosRM[1]))
+objetive = True
+while True:
+
+    # Falta implementear pygame
+    # pyg.time.delay(500)
+    # if(objetive == True):
+    #     if()
+
+    for event in pyg.event.get():
+        if event.type == pyg.QUIT:
+            sys.exit()
+
+    pyg.display.update()
