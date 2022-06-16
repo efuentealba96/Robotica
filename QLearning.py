@@ -268,7 +268,7 @@ Epsilon = 0.1
 Q = InitQTable(62, 4)
 aList_A = ['N', 'S', 'E', 'O']
 for i in range(nMax_episodidos):
-    aPosRM = [0, 7]
+    aPosRM = [0, 0]
     total_rw, steps = QLearning(nMax_episodidos)
     print('Episodio: ' + str(i) + ' Steps: ' +
           str(steps) + ' Reward: ' + str(total_rw))
@@ -277,7 +277,7 @@ for i in range(nMax_episodidos):
 
 aOPTIMO = aSTATE
 # Crea un mapa con los movimientos optimos
-for i in range(146):
+for i in range(62):
     for s in range(len(aOPTIMO)):  # f , c = Q.index(i)
         for z in range(len(aOPTIMO[s])):
             if aOPTIMO[s][z] == i:
@@ -290,7 +290,6 @@ for i in range(146):
 for i in aOPTIMO:
     print(i)
 
-print(aOPTIMO)
 # Seccion de trabajo con pygame
 pyg.init()
 size = width, height = 400, 600
@@ -306,31 +305,61 @@ nave = pyg.transform.scale(pyg.image.load("images/nave.png"), (40, 40))
 star = pyg.transform.scale(pyg.image.load("images/star.png"), sizeImage)
 fondo = pyg.transform.scale(pyg.image.load("images/fondo.jpg"), sizeImage)
 
-x = 0
-y = 0
-screen.blit(nave, (0, 0))
-for i in range(12):
-    for j in range(8):
-        if aMAPA[i][j] == -1:
-            screen.blit(muro, (x, y))
-            x += 50
-        else:
-            screen.blit(fondo, (x, y))
-            x += 50
-    screen.blit(star, (200, 50*10))
+
+def dibujar():
     x = 0
-    y += 50
-screen.blit(nave, (aPosRM[0], aPosRM[1]))
+    y = 0
+    for i in range(12):
+        for j in range(8):
+            if aMAPA[i][j] == -1:
+                screen.blit(muro, (x, y))
+                x += 50
+            else:
+                screen.blit(fondo, (x, y))
+                x += 50
+        screen.blit(star, (200, 50*10))
+        x = 0
+        y += 50
+
+
+dibujar()
+mPosX = 0
+mPosY = 0
+nPosX = 0
+nPosY = 0
+screen.blit(nave, (mPosX, mPosY))
+
 objetive = True
 while True:
-
     # Falta implementear pygame
-    # pyg.time.delay(500)
-    # if(objetive == True):
-    #     if()
+    pyg.time.delay(500)
+    if(objetive == True):
+        if(nPosX == 10 and nPosY == 4):
+            dibujar()
+            screen.blit(nave, (mPosX, mPosY))
+            objetive = False
+        elif(aOPTIMO[nPosX][nPosY] == 'N' and aMAPA[nPosX][nPosY] != -1):
+            dibujar()
+            mPosY -= 50
+            nPosX -= 1
+            screen.blit(nave, (mPosX, mPosY))
 
+        elif(aOPTIMO[nPosX][nPosY] == 'S' and aMAPA[nPosX][nPosY] != -1):
+            dibujar()
+            mPosY += 50
+            nPosX += 1
+            screen.blit(nave, (mPosX, mPosY))
+        elif(aOPTIMO[nPosX][nPosY] == 'E' and aMAPA[nPosX][nPosY] != -1):
+            dibujar()
+            mPosX += 50
+            nPosY += 1
+            screen.blit(nave, (mPosX, mPosY))
+        elif(aOPTIMO[nPosX][nPosY] == 'O' and aMAPA[nPosX][nPosY] != -1):
+            dibujar()
+            mPosX -= 50
+            nPosY -= 1
+            screen.blit(nave, (mPosX, mPosY))
+    pyg.display.update()
     for event in pyg.event.get():
         if event.type == pyg.QUIT:
             sys.exit()
-
-    pyg.display.update()
