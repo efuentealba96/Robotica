@@ -97,54 +97,6 @@ def UpDateQ(s, a, r, sp):
 # de la accion que se pasa como parametro
 # nA: Accion de origen | fil: posicion en la fila actual | col: posicion en la columna acutal
 
-
-def OtherAction(nA, fil, col):
-    nDadoA = ra.random()
-    # Accion Norte
-    if nA == nNORTE:
-        if col > 0 and col < 7:
-            if nDadoA >= 0.0 and nDadoA < 0.5:
-                return nESTE
-            else:
-                return nWESTE
-        if col == 0:
-            return nESTE
-        if col == 7:
-            return nWESTE
-    # Accion Sur
-    if nA == nSUR:
-        if col > 0 and col < 7:
-            if nDadoA >= 0.0 and nDadoA < 0.5:
-                return nESTE
-            else:
-                return nWESTE
-        if col == 0:
-            return nESTE
-        if col == 7:
-            return nWESTE
-    # Accion Este
-    if nA == nESTE:
-        if fil > 0 and fil < 11:
-            if nDadoA >= 0.0 and nDadoA < 0.5:
-                return nNORTE
-            else:
-                return nSUR
-        if fil == 0:
-            return nSUR
-        if fil == 11:
-            return nNORTE
-    # Accion Oeste
-    if nA == nWESTE:
-        if fil > 0 and fil < 11:
-            if nDadoA >= 0.0 and nDadoA < 0.5:
-                return nNORTE
-            else:
-                return nSUR
-        if fil == 0:
-            return nSUR
-        if fil == 11:
-            return nNORTE
-
 # Simulamos la navegacion
 
 
@@ -163,9 +115,24 @@ def Run_Action(a, nExito):
                     next_state = aSTATE[i-1][j]  # Actualizar nuevo Estado
                     return next_state
                 else:
-                    newAction = OtherAction(a, i, j)
-                    next_state = Run_Action(newAction, 1)
-                    return next_state
+                    newDado = ra.random()
+                    if(j > nColumMin and j < nColumMax):
+                        if (newDado >= 0.0 and newDado <= 0.5):
+                            newAction = nESTE
+                            next_state = Run_Action(newAction, 0.8)
+                            return next_state
+                        else:
+                            newAction = nWESTE
+                            next_state = Run_Action(newAction, 0.8)
+                            return next_state
+                    if (j == nColumMin):
+                        newAction = nESTE
+                        next_state = Run_Action(newAction, 0.8)
+                        return next_state
+                    if (j == nColumMax):
+                        newAction = nWESTE
+                        next_state = Run_Action(newAction, 0.8)
+                        return next_state
                 # ------------------------------------------
             else:  # Si hay una muralla...
                 aPosRM = [i, j]
@@ -186,9 +153,24 @@ def Run_Action(a, nExito):
                     next_state = aSTATE[i+1][j]  # Actualizar nuevo Estado
                     return next_state
                 else:
-                    newAction = OtherAction(a, i, j)
-                    next_state = Run_Action(newAction, 1)
-                    return next_state
+                    newDado = ra.random()
+                    if(j > nColumMin and j < nColumMax):
+                        if (newDado >= 0.0 and newDado <= 0.5):
+                            newAction = nESTE
+                            next_state = Run_Action(newAction, 0.8)
+                            return next_state
+                        else:
+                            newAction = nWESTE
+                            next_state = Run_Action(newAction, 0.8)
+                            return next_state
+                    if(j == nColumMin):
+                        newAction = nESTE
+                        next_state = Run_Action(newAction, 0.8)
+                        return next_state
+                    if(j == nColumMax):
+                        newAction = nWESTE
+                        next_state = Run_Action(newAction, 0.8)
+                        return next_state
                 # ------------------------------------------
             else:  # Si hay una muralla...
                 aPosRM = [i, j]
@@ -208,9 +190,24 @@ def Run_Action(a, nExito):
                     next_state = aSTATE[i][j+1]  # Actualizar nuevo Estado
                     return next_state
                 else:
-                    newAction = OtherAction(a, i, j)
-                    next_state = Run_Action(newAction, 1)
-                    return next_state
+                    newDado = ra.random()
+                    if(i > nFilasMin and i < nFilasMax):
+                        if (newDado >= 0.0 and newDado <= 0.5):
+                            newAction = nNORTE
+                            next_state = Run_Action(newAction, 0.8)
+                            return next_state
+                        else:
+                            newAction = nSUR
+                            next_state = Run_Action(newAction, 0.8)
+                            return next_state
+                    if(i == nFilasMin):
+                        newAction = nSUR
+                        next_state = Run_Action(newAction, 0.8)
+                        return next_state
+                    if(i == nFilasMax):
+                        newAction = nNORTE
+                        next_state = Run_Action(newAction, 0.8)
+                        return next_state
                 # ------------------------------------------
             else:  # Si hay una muralla...
                 aPosRM = [i, j]
@@ -230,9 +227,24 @@ def Run_Action(a, nExito):
                     next_state = aSTATE[i][j-1]  # Actualizar nuevo Estado
                     return next_state
                 else:
-                    newAction = OtherAction(a, i, j)
-                    next_state = Run_Action(newAction, 1)
-                    return next_state
+                    newDado = ra.random()
+                    if(i > nFilasMin and i < nFilasMax):
+                        if (newDado >= 0.0 and newDado <= 0.5):
+                            newAction = nNORTE
+                            next_state = Run_Action(newAction, 0.8)
+                            return next_state
+                        else:
+                            newAction = nSUR
+                            next_state = Run_Action(newAction, 0.8)
+                            return next_state
+                    if(i == nFilasMin):
+                        newAction = nSUR
+                        next_state = Run_Action(newAction, 0.8)
+                        return next_state
+                    if(i == nFilasMax):
+                        newAction = nNORTE
+                        next_state = Run_Action(newAction, 0.8)
+                        return next_state
                 # ------------------------------------------
             else:  # Si hay una muralla...
                 aPosRM = [i, j]
@@ -323,10 +335,10 @@ def dibujar():
 
 
 dibujar()
-mPosX = 0
-mPosY = 0
-nPosX = 0
-nPosY = 0
+mPosX = 0  # y pos en caso de aPosRM
+mPosY = 0  # x pos en caso de aPosRM
+nPosX = 0  # x pos en caso de aPosRM
+nPosY = 0  # y pos en caso de aPosRM
 screen.blit(nave, (mPosX, mPosY))
 
 objetive = True
