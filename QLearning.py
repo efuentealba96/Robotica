@@ -1,5 +1,6 @@
 import random as ra
 import pygame as pyg
+from pygame import mixer
 import sys
 
 # Parametros modelo QLearning RL_MDP Discount rewards
@@ -48,6 +49,21 @@ aSTATE = [[0,  1,  2,  3,  4, -1,  5,  6],  # 0
           [-1, 48, -1, 49, -1, 50, -1, 51],  # 9
           [-1, 52, -1, 53, 54, 55, -1, -1],  # 10
           [56, 57, -1, 58, -1, 59, 60, 61]]  # 11
+
+# Funcion para generar elecion usando probabilidades
+
+
+def LanzarMoneda():
+    cara = 0
+    cruz = 0
+    for i in range(5):
+        value = ra.randint(0, 1)
+        if(value == 0):
+            cara += 1
+        else:
+            cruz += 1
+    return cara, cruz
+
 
 # Genere QTable - nS = Estados, nA = Acciones
 
@@ -106,6 +122,8 @@ def Run_Action(a, nExito):
     nDado = ra.random()
     i = aPosRM[0]  # Fila Posicion del robot mapa
     j = aPosRM[1]  # Columna Posicion del robot mapa
+
+    # Caso accion NORTE
     if a == nNORTE:  # El robot sube
         if i > nFilasMin:  # Bordes del Mapa
             if aMAPA[i-1][j] != -1:  # Hay una muralla?
@@ -115,9 +133,9 @@ def Run_Action(a, nExito):
                     next_state = aSTATE[i-1][j]  # Actualizar nuevo Estado
                     return next_state
                 else:
-                    newDado = ra.random()
-                    if(j > nColumMin and j < nColumMax):
-                        if (newDado >= 0.0 and newDado <= 0.5):
+                    nResult = LanzarMoneda()
+                    if(j > nColumMin and j < nColumMax):  # Verificamos que no estamos en un borde
+                        if(nResult[0] > nResult[1]):
                             newAction = nESTE
                             next_state = Run_Action(newAction, 0.8)
                             return next_state
@@ -143,19 +161,20 @@ def Run_Action(a, nExito):
             # print(aPosRM)
             next_state = aSTATE[i][j]  # Actualizar nuevo Estado
             return next_state
-    #########################################################################
+
+    # Caso accion SUR
     if a == nSUR:  # El robot baja
         if i < 11:  # Bordes del Mapa
             if aMAPA[i+1][j] != -1:  # Hay una muralla?
                 # ------------ Probabilidad ----------------
-                if nDado >= 0.0 and nDado <= nExito:  # <-------------- Probabilidad de moverse
+                if nDado >= 0.0 and nDado <= nExito:
                     aPosRM = [i+1, j]
-                    next_state = aSTATE[i+1][j]  # Actualizar nuevo Estado
+                    next_state = aSTATE[i+1][j]
                     return next_state
                 else:
-                    newDado = ra.random()
+                    nResult = LanzarMoneda()
                     if(j > nColumMin and j < nColumMax):
-                        if (newDado >= 0.0 and newDado <= 0.5):
+                        if(nResult[0] > nResult[1]):
                             newAction = nESTE
                             next_state = Run_Action(newAction, 0.8)
                             return next_state
@@ -180,19 +199,19 @@ def Run_Action(a, nExito):
             aPosRM = [i, j]
             next_state = aSTATE[i][j]
             return next_state
-
+    # Caso accion ESTE
     if a == nESTE:  # El robot va a la derecha
         if j < 7:  # Bordes del Mapa
             if aMAPA[i][j+1] != -1:  # Hay una muralla?
                 # ------------ Probabilidad ----------------
-                if nDado >= 0.0 and nDado <= nExito:  # <-------------- Probabilidad de moverse
+                if nDado >= 0.0 and nDado <= nExito:
                     aPosRM = [i, j+1]
-                    next_state = aSTATE[i][j+1]  # Actualizar nuevo Estado
+                    next_state = aSTATE[i][j+1]
                     return next_state
                 else:
-                    newDado = ra.random()
+                    nResult = LanzarMoneda()
                     if(i > nFilasMin and i < nFilasMax):
-                        if (newDado >= 0.0 and newDado <= 0.5):
+                        if(nResult[0] > nResult[1]):
                             newAction = nNORTE
                             next_state = Run_Action(newAction, 0.8)
                             return next_state
@@ -217,19 +236,19 @@ def Run_Action(a, nExito):
             aPosRM = [i, j]
             next_state = aSTATE[i][j]
             return next_state
-
+    # Caso Accion OESTE
     if a == nWESTE:  # El robot va a la izquierda
         if j > 0:  # Bordes del Mapa
             if aMAPA[i][j-1] != -1:  # Hay una muralla?
                 # ------------ Probabilidad ----------------
-                if nDado >= 0.0 and nDado <= nExito:  # <-------------- Probabilidad de moverse
+                if nDado >= 0.0 and nDado <= nExito:
                     aPosRM = [i, j-1]
-                    next_state = aSTATE[i][j-1]  # Actualizar nuevo Estado
+                    next_state = aSTATE[i][j-1]
                     return next_state
                 else:
-                    newDado = ra.random()
+                    nResult = LanzarMoneda()
                     if(i > nFilasMin and i < nFilasMax):
-                        if (newDado >= 0.0 and newDado <= 0.5):
+                        if(nResult[0] > nResult[1]):
                             newAction = nNORTE
                             next_state = Run_Action(newAction, 0.8)
                             return next_state
@@ -290,7 +309,7 @@ for i in range(nMax_episodidos):
 aOPTIMO = aSTATE
 # Crea un mapa con los movimientos optimos
 for i in range(62):
-    for s in range(len(aOPTIMO)):  # f , c = Q.index(i)
+    for s in range(len(aOPTIMO)):
         for z in range(len(aOPTIMO[s])):
             if aOPTIMO[s][z] == i:
                 aOPTIMO[s][z] = aList_A[Q[i].index(max(Q[i]))]
@@ -304,11 +323,15 @@ for i in aOPTIMO:
 
 # Seccion de trabajo con pygame
 pyg.init()
+mixer.init()
 size = width, height = 400, 600
 screen = pyg.display.set_mode(size)
 pyg.display.set_caption("Proyecto final")
 icon = pyg.image.load("images/terminator.png")
 pyg.display.set_icon(icon)
+mixer.music.load("sounds/soundtrack.mp3")
+mixer.music.set_volume(0.5)
+mixer.music.play()
 
 sizeImage = (50, 50)
 
@@ -346,7 +369,8 @@ while True:
     # Falta implementear pygame
     pyg.time.delay(500)
     if(objetive == True):
-        if(nPosX == 10 and nPosY == 4):
+        if(nPosX == 10 and nPosY == 4):  # LLego al objetivo
+            mixer.music.set_volume(0.2)
             dibujar()
             screen.blit(nave, (mPosX, mPosY))
             objetive = False
