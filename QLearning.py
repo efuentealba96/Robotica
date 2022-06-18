@@ -137,19 +137,19 @@ def Run_Action(a, nExito):
                     if(j > nColumMin and j < nColumMax):  # Verificamos que no estamos en un borde
                         if(nResult[0] > nResult[1]):
                             newAction = nESTE
-                            next_state = Run_Action(newAction, 0.8)
+                            next_state = Run_Action(newAction, 0.1)
                             return next_state
                         else:
                             newAction = nWESTE
-                            next_state = Run_Action(newAction, 0.8)
+                            next_state = Run_Action(newAction, 0.1)
                             return next_state
                     if (j == nColumMin):
                         newAction = nESTE
-                        next_state = Run_Action(newAction, 0.8)
+                        next_state = Run_Action(newAction, 0.1)
                         return next_state
                     if (j == nColumMax):
                         newAction = nWESTE
-                        next_state = Run_Action(newAction, 0.8)
+                        next_state = Run_Action(newAction, 0.1)
                         return next_state
                 # ------------------------------------------
             else:  # Si hay una muralla...
@@ -158,7 +158,6 @@ def Run_Action(a, nExito):
                 return next_state
         else:  # Si esta al borde del mapa...
             aPosRM = [i, j]
-            # print(aPosRM)
             next_state = aSTATE[i][j]  # Actualizar nuevo Estado
             return next_state
 
@@ -176,19 +175,19 @@ def Run_Action(a, nExito):
                     if(j > nColumMin and j < nColumMax):
                         if(nResult[0] > nResult[1]):
                             newAction = nESTE
-                            next_state = Run_Action(newAction, 0.8)
+                            next_state = Run_Action(newAction, 0.1)
                             return next_state
                         else:
                             newAction = nWESTE
-                            next_state = Run_Action(newAction, 0.8)
+                            next_state = Run_Action(newAction, 0.1)
                             return next_state
                     if(j == nColumMin):
                         newAction = nESTE
-                        next_state = Run_Action(newAction, 0.8)
+                        next_state = Run_Action(newAction, 0.1)
                         return next_state
                     if(j == nColumMax):
                         newAction = nWESTE
-                        next_state = Run_Action(newAction, 0.8)
+                        next_state = Run_Action(newAction, 0.1)
                         return next_state
                 # ------------------------------------------
             else:  # Si hay una muralla...
@@ -213,19 +212,19 @@ def Run_Action(a, nExito):
                     if(i > nFilasMin and i < nFilasMax):
                         if(nResult[0] > nResult[1]):
                             newAction = nNORTE
-                            next_state = Run_Action(newAction, 0.8)
+                            next_state = Run_Action(newAction, 0.1)
                             return next_state
                         else:
                             newAction = nSUR
-                            next_state = Run_Action(newAction, 0.8)
+                            next_state = Run_Action(newAction, 0.1)
                             return next_state
                     if(i == nFilasMin):
                         newAction = nSUR
-                        next_state = Run_Action(newAction, 0.8)
+                        next_state = Run_Action(newAction, 0.1)
                         return next_state
                     if(i == nFilasMax):
                         newAction = nNORTE
-                        next_state = Run_Action(newAction, 0.8)
+                        next_state = Run_Action(newAction, 0.1)
                         return next_state
                 # ------------------------------------------
             else:  # Si hay una muralla...
@@ -250,19 +249,19 @@ def Run_Action(a, nExito):
                     if(i > nFilasMin and i < nFilasMax):
                         if(nResult[0] > nResult[1]):
                             newAction = nNORTE
-                            next_state = Run_Action(newAction, 0.8)
+                            next_state = Run_Action(newAction, 0.1)
                             return next_state
                         else:
                             newAction = nSUR
-                            next_state = Run_Action(newAction, 0.8)
+                            next_state = Run_Action(newAction, 0.1)
                             return next_state
                     if(i == nFilasMin):
                         newAction = nSUR
-                        next_state = Run_Action(newAction, 0.8)
+                        next_state = Run_Action(newAction, 0.1)
                         return next_state
                     if(i == nFilasMax):
                         newAction = nNORTE
-                        next_state = Run_Action(newAction, 0.8)
+                        next_state = Run_Action(newAction, 0.1)
                         return next_state
                 # ------------------------------------------
             else:  # Si hay una muralla...
