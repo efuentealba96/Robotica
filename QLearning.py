@@ -332,6 +332,10 @@ mixer.music.load("sounds/soundtrack.mp3")
 mixer.music.set_volume(0.5)
 mixer.music.play()
 
+# Fuente de texto para el final
+fuente = pyg.font.SysFont("Arial", 30)
+texto = fuente.render("Felicitaciones", 0, (200, 60, 80), (0, 0, 0))
+
 sizeImage = (50, 50)
 
 muro = pyg.transform.scale(pyg.image.load("images/muro.png"), sizeImage)
@@ -373,6 +377,8 @@ while True:
             dibujar()
             screen.blit(nave, (mPosX, mPosY))
             objetive = False
+            # Cuadro final
+            screen.blit(texto, (100, 300))
         elif(aOPTIMO[nPosX][nPosY] == 'N' and aMAPA[nPosX][nPosY] != -1):
             dibujar()
             mPosY -= 50
